@@ -9,6 +9,7 @@ export interface Influencer {
   id: string;
   name: string;
   handle: string;
+  description: string;
   avatar: string;
   followers: number;
   mainCategory: Category;

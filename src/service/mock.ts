@@ -5,6 +5,8 @@ export const mockInfluencers: Influencer[] = [
     id: '1',
     name: 'Dr. Health Guru',
     handle: '@healthguru',
+    description:
+      'Stanford Professor of Medicine, focusing on evidence-based approaches to health and wellness. Host of the Health Revolution Podcast.',
     avatar: '/api/placeholder/40/40',
     followers: 1200000,
     mainCategory: 'Medicine',
@@ -18,6 +20,8 @@ export const mockInfluencers: Influencer[] = [
     id: '2',
     name: 'Wellness Warrior',
     handle: '@wellnessw',
+    description:
+      'Certified nutritionist and wellness coach. Helping people find balance through holistic approaches to health.',
     avatar: '/api/placeholder/40/40',
     followers: 890000,
     mainCategory: 'Nutrition',
@@ -31,6 +35,8 @@ export const mockInfluencers: Influencer[] = [
     id: '3',
     name: 'Mind & Body Coach',
     handle: '@mbcoach',
+    description:
+      'Clinical psychologist specializing in mind-body connection. Teaching evidence-based techniques for mental wellness.',
     avatar: '/api/placeholder/40/40',
     followers: 550000,
     mainCategory: 'Mental Health',
@@ -44,6 +50,8 @@ export const mockInfluencers: Influencer[] = [
     id: '4444',
     name: 'Mind & Body Coach',
     handle: '@mbcoach',
+    description:
+      'Clinical psychologist specializing in mind-body connection. Teaching evidence-based techniques for mental wellness.',
     avatar: '/api/placeholder/40/40',
     followers: 550000,
     mainCategory: 'Mental Health',
