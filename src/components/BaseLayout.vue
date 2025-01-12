@@ -28,16 +28,20 @@ const titleStyle = ref(
   <div class="min-h-screen p-2">
     <Menubar :model="menuItems">
       <template #start>
-        <div class="hidden md:flex items-center gap-2 text-primary-500">
-          <i class="pi pi-shield text-primary-500"></i>
-          <span :class="['text-xl', titleStyle]">
-            {{ title }}
-          </span>
-        </div>
+        <router-link to="/">
+          <div class="hidden md:flex items-center gap-2 text-primary-500">
+            <i class="pi pi-shield text-primary-500"></i>
+            <span :class="['text-xl', titleStyle]">
+              {{ title }}
+            </span>
+          </div>
+        </router-link>
       </template>
 
       <template #end>
-        <span :class="['md:hidden pr-2', titleStyle]">{{ title }}</span>
+        <router-link to="/">
+          <span :class="['md:hidden pr-2', titleStyle]">{{ title }}</span>
+        </router-link>
       </template>
     </Menubar>
 
