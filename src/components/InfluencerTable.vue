@@ -6,34 +6,21 @@ import Tag from 'primevue/tag';
 import { useRouter } from 'vue-router';
 import type { Influencer } from '@/types/influencer';
 import { mockInfluencers } from '@/service/mock';
+import {
+  formatNumber,
+  getCategoryColor,
+  getTrustScoreColor,
+  calculateTrustScore,
+} from '@/utils/format';
 
 const router = useRouter();
 const influencers = ref<Influencer[]>(mockInfluencers);
-
-const formatNumber = (num: number) => {
-  return Intl.NumberFormat('en-US', {
-    notation: 'compact',
-    maximumFractionDigits: 1,
-  }).format(num);
-};
-
-const getCategoryColor = (category: string) => {
-  const colors = {
-    Medicine: 'info',
-    Nutrition: 'success',
-    'Mental Health': 'warning',
-  };
-  return colors[category as keyof typeof colors] || 'info';
-};
 
 const influencersWithScore = computed(() =>
   influencers.value
     .map(inf => ({
       ...inf,
-      trustScore: (() => {
-        const total = inf.stats.verified + inf.stats.debunked;
-        return total === 0 ? 0 : Math.round((inf.stats.verified / total) * 100);
-      })(),
+      trustScore: calculateTrustScore(inf.stats.verified, inf.stats.debunked),
     }))
     .sort((a, b) => b.trustScore - a.trustScore)
     .map((inf, index) => ({ ...inf, rank: index + 1 }))
@@ -93,16 +80,7 @@ const handleRowClick = (event: { data: Influencer }) => {
 
     <Column field="trustScore" header="Trust Score" :sortable="true" class="w-32">
       <template #body="{ data }">
-        <span
-          :class="[
-            'font-bold',
-            data.trustScore >= 80
-              ? 'text-green-500'
-              : data.trustScore >= 60
-                ? 'text-yellow-500'
-                : 'text-red-500',
-          ]"
-        >
+        <span :class="['font-bold', getTrustScoreColor(data.trustScore)]">
           {{ data.trustScore }}%
         </span>
       </template>
