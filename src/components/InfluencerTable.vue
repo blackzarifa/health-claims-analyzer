@@ -6,12 +6,7 @@ import Tag from 'primevue/tag';
 import { useRouter } from 'vue-router';
 import type { Influencer } from '@/types/influencer';
 import { mockInfluencers } from '@/service/mock';
-import {
-  formatNumber,
-  getCategoryColor,
-  getTrustScoreColor,
-  calculateTrustScore,
-} from '@/utils/format';
+import { formatNumber, getTrustScoreColor, calculateTrustScore } from '@/utils/format';
 
 const router = useRouter();
 const influencers = ref<Influencer[]>(mockInfluencers);
@@ -64,11 +59,7 @@ const handleRowClick = (event: { data: Influencer }) => {
 
     <Column field="mainCategory" header="Category" class="w-40">
       <template #body="{ data }">
-        <Tag
-          :value="data.mainCategory"
-          :severity="getCategoryColor(data.mainCategory)"
-          size="small"
-        />
+        <Tag :value="data.mainCategory" severity="info" size="small" />
       </template>
     </Column>
 

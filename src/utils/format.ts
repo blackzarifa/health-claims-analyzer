@@ -5,15 +5,6 @@ export const formatNumber = (num: number) => {
   }).format(num);
 };
 
-export const getCategoryColor = (category: string) => {
-  const colors = {
-    Medicine: 'info',
-    Nutrition: 'success',
-    'Mental Health': 'warning',
-  } as const;
-  return colors[category as keyof typeof colors] || 'info';
-};
-
 export const getTrustScoreColor = (score: number) => {
   if (score >= 80) return 'text-green-500';
   if (score >= 60) return 'text-yellow-500';
