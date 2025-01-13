@@ -28,7 +28,7 @@ export interface FirestoreInfluencer {
   handle: string;
   avatar: string;
   followers: number;
-  mainCategory: string;
+  category: string;
   stats: {
     verified: number;
     debunked: number;
@@ -45,12 +45,11 @@ export interface FirestoreClaim {
   analysis: {
     result: 'verified' | 'debunked';
     explanation: string;
+    confidence: number;
     sources: Array<{
       title: string;
       url: string;
-      date: string;
     }>;
   };
-  claimDate: string;
   createdAt: string;
 }
