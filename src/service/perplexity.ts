@@ -45,7 +45,6 @@ export class PerplexityAPI {
     return {
       name: d.name,
       handle: d.handle,
-      avatar: `/api/placeholder/40/40`,
       followers: d.followers,
       category: d.category,
       stats: { verified: 0, debunked: 0 },

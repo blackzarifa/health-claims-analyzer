@@ -1,5 +1,3 @@
-export type Category = 'Medicine' | 'Nutrition' | 'Mental Health';
-
 export interface VerificationStats {
   verified: number;
   debunked: number;
@@ -10,9 +8,8 @@ export interface Influencer {
   name: string;
   handle: string;
   description: string;
-  avatar: string;
   followers: number;
-  mainCategory: Category;
+  mainCategory: string;
   stats: VerificationStats;
   lastUpdated: string;
 }

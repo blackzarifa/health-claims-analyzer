@@ -57,7 +57,6 @@ export const useInfluencerStore = defineStore('influencers', () => {
       const influencerRef = await addDoc(collection(db, COLLECTIONS.INFLUENCERS), {
         name: data.name,
         handle: data.handle,
-        avatar: `/api/placeholder/40/40`,
         followers: data.followers,
         category: data.category as FirestoreInfluencer['category'],
         stats: { verified: 0, debunked: 0 },

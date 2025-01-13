@@ -7,7 +7,6 @@ export const mockInfluencers: Influencer[] = [
     handle: '@healthguru',
     description:
       'Stanford Professor of Medicine, focusing on evidence-based approaches to health and wellness. Host of the Health Revolution Podcast.',
-    avatar: '/api/placeholder/40/40',
     followers: 1200000,
     mainCategory: 'Medicine',
     stats: {
@@ -22,7 +21,6 @@ export const mockInfluencers: Influencer[] = [
     handle: '@wellnessw',
     description:
       'Certified nutritionist and wellness coach. Helping people find balance through holistic approaches to health.',
-    avatar: '/api/placeholder/40/40',
     followers: 890000,
     mainCategory: 'Nutrition',
     stats: {
@@ -37,7 +35,6 @@ export const mockInfluencers: Influencer[] = [
     handle: '@mbcoach',
     description:
       'Clinical psychologist specializing in mind-body connection. Teaching evidence-based techniques for mental wellness.',
-    avatar: '/api/placeholder/40/40',
     followers: 550000,
     mainCategory: 'Mental Health',
     stats: {
@@ -52,8 +49,7 @@ export const mockInfluencers: Influencer[] = [
     handle: '@mbcoach',
     description:
       'Clinical psychologist specializing in mind-body connection. Teaching evidence-based techniques for mental wellness.',
-    avatar: '/api/placeholder/40/40',
-    followers: 550000,
+    followers: 55000,
     mainCategory: 'Mental Health',
     stats: {
       verified: 132,

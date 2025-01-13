@@ -53,12 +53,6 @@ const handleRowClick = (event: { data: Influencer }) => {
       </template>
     </Column>
 
-    <Column field="avatar" class="w-16">
-      <template #body="{ data }">
-        <img :src="data.avatar" :alt="data.name" class="w-10 h-10 rounded-full" />
-      </template>
-    </Column>
-
     <Column field="name" header="Influencer" class="w-64">
       <template #body="{ data }">
         <div>

@@ -26,7 +26,6 @@ export interface FirestoreInfluencer {
   id: string;
   name: string;
   handle: string;
-  avatar: string;
   followers: number;
   category: string;
   stats: {

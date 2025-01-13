@@ -105,11 +105,6 @@ const sortedAndFilteredClaims = computed(() => {
 <template>
   <div v-if="influencer">
     <div class="flex flex-col md:flex-row items-center text-center md:text-left md:gap-8 mb-6">
-      <img
-        :src="influencer.avatar"
-        :alt="influencer.name"
-        class="w-20 h-20 md:w-16 md:h-16 rounded-full"
-      />
       <div>
         <h1 class="text-3xl font-bold mb-1">{{ influencer.name }}</h1>
         <p class="text-gray-400">{{ influencer.handle }}</p>
