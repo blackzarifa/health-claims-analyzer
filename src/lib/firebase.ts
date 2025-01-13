@@ -21,34 +21,3 @@ export const COLLECTIONS = {
   SEARCH_CONFIG: 'search_config',
   API_KEYS: 'api_keys',
 } as const;
-
-export interface FirestoreInfluencer {
-  id: string;
-  name: string;
-  handle: string;
-  followers: number;
-  category: string;
-  stats: {
-    verified: number;
-    debunked: number;
-  };
-  lastUpdated: string;
-  createdAt: string;
-}
-
-export interface FirestoreClaim {
-  id: string;
-  influencerId: string;
-  statement: string;
-  category: string;
-  analysis: {
-    result: 'verified' | 'debunked';
-    explanation: string;
-    confidence: number;
-    sources: Array<{
-      title: string;
-      url: string;
-    }>;
-  };
-  createdAt: string;
-}
