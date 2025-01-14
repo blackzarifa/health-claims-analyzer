@@ -95,6 +95,8 @@ async function discoverInfluencers() {
               v-model="selectedSources"
               fluid
               :options="sources"
+              display="chip"
+              showClear
               optionLabel="name"
               placeholder="Select sources to check"
               :disabled="store.isAnalyzing"
