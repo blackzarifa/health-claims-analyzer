@@ -67,7 +67,7 @@ async function discoverInfluencers() {
             <label class="block mb-2">Perplexity API Key</label>
             <Password
               :model-value="store.apiKey"
-              @update:model-value="store.setApiKey || ''"
+              @update:model-value="store.setApiKey"
               placeholder="pplx-xxxxxxxxxxxxxxxx"
               fluid
               toggleMask
