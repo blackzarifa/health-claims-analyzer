@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import Card from 'primevue/card';
+import Password from 'primevue/password'
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import Button from 'primevue/button';
@@ -64,12 +65,13 @@ async function discoverInfluencers() {
         <div class="space-y-4">
           <div>
             <label class="block mb-2">Perplexity API Key</label>
-            <InputText
+            <Password
               :model-value="store.apiKey"
               @update:model-value="store.setApiKey || ''"
-              type="password"
-              class="w-full"
               placeholder="pplx-xxxxxxxxxxxxxxxx"
+              fluid
+              toggleMask
+              :feedback="false"
             />
           </div>
 
@@ -77,7 +79,7 @@ async function discoverInfluencers() {
             <label class="block mb-2">Max Claims per Analysis</label>
             <InputNumber
               v-model="maxClaims"
-              class="w-full"
+              fluid
               :min="1"
               :max="50"
               :step="1"
@@ -91,10 +93,10 @@ async function discoverInfluencers() {
             <label class="block mb-2">Scientific Sources</label>
             <MultiSelect
               v-model="selectedSources"
+              fluid
               :options="sources"
               optionLabel="name"
               placeholder="Select sources to check"
-              class="w-full"
               :disabled="store.isAnalyzing"
             />
             <small class="text-gray-400">Sources to verify claims against</small>
