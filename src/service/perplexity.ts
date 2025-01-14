@@ -52,7 +52,7 @@ export class PerplexityAPI {
       description: d.description,
       followers: d.followers,
       mainCategory: d.mainCategory,
-      stats: { verified: 0, debunked: 0 }, // Will update after analyzing claims
+      stats: { verified: 0, debunked: 0 },
       lastUpdated: new Date().toISOString(),
     };
   }
@@ -64,7 +64,8 @@ export class PerplexityAPI {
     if (
       typeof d.claim !== 'string' ||
       typeof d.trustScore !== 'number' ||
-      typeof d.analysis !== 'string'
+      typeof d.analysis !== 'string' ||
+      !Array.isArray(d.sources)
     ) {
       throw new Error('Missing or invalid claim fields');
     }
@@ -75,25 +76,27 @@ export class PerplexityAPI {
       verified: d.trustScore >= 70,
       trustScore: d.trustScore,
       analysis: d.analysis,
+      sources: d.sources,
     };
   }
 
   async findInfluencer(query: string) {
     const prompt = `Act as a health content researcher. Search for "${query}" and analyze their recent health-related content.
-    Return the data in this JSON format:
+    Respond only in this JSON format:
     {
       "name": "full name",
       "handle": "social media handle",
-      "description": "1-2 sentences about their expertise",
+      "description": "small description about their expertise",
       "followers": number,
-      "mainCategory": "Medicine/Nutrition/Mental Health",
+      "mainCategory": "Medicine/Nutrition/Mental Health/etc...",
       "claims": [
         {
           "claim": "exact health claim",
           "trustScore": number between 0-100,
-          "analysis": "verification explanation with scientific backing"
+          "analysis": "verification explanation with scientific backing",
+          "sources": "an array of strings with the sources for the analysis",
         }
-      ]
+      ],
     }`;
 
     const result = await this.search(prompt);
@@ -112,8 +115,9 @@ export class PerplexityAPI {
   }
 
   async discoverInfluencers() {
-    const prompt = `Find 3 trending health influencers who are actively sharing scientific health advice.
-    Return them in JSON format:
+    const prompt = `Find 3 trending health influencers who are actively sharing scientific health adviceand analyze their recent health-related content.
+
+    Respond only in this JSON format:
     {
       "influencers": [
         {
@@ -121,7 +125,15 @@ export class PerplexityAPI {
           "handle": "social media handle",
           "description": "1-2 sentences about their expertise",
           "followers": number,
-          "mainCategory": "Medicine/Nutrition/Mental Health"
+          "mainCategory": "Medicine/Nutrition/Mental Health/etc...",
+          "claims": [
+            {
+              "claim": "exact health claim",
+              "trustScore": number between 0-100,
+              "analysis": "verification explanation with scientific backing",
+              "sources": "an array of strings with the sources for the analysis",
+            }
+          ],
         }
       ]
     }`;
@@ -129,11 +141,13 @@ export class PerplexityAPI {
     const result = await this.search(prompt);
     const { influencers } = JSON.parse(result.choices[0].message.content);
 
-    return Promise.all(
-      influencers.map(async (inf: unknown) => {
-        const influencer = this.validateInfluencer(inf);
-        return this.findInfluencer(influencer.name);
-      })
-    );
+    return influencers.map((inf: any) => {
+      const claims = (inf.claims || []).map(this.validateClaim);
+      delete inf.claims;
+      return {
+        influencer: this.validateInfluencer(inf),
+        claims
+      };
+    });
   }
 }

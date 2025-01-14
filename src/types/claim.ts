@@ -5,4 +5,5 @@ export interface Claim {
   verified: boolean;
   trustScore: number;
   analysis: string;
+  sources: string[];
 }
