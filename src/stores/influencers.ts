@@ -4,7 +4,6 @@ import { collection, addDoc, getDocs, serverTimestamp } from 'firebase/firestore
 import { db, COLLECTIONS } from '@/lib/firebase';
 import { PerplexityAPI } from '@/service/perplexity';
 import type { Influencer } from '@/types/influencer';
-import type { Claim } from '@/types/claim';
 
 export const useInfluencerStore = defineStore('influencers', () => {
   const apiKey = ref('');
@@ -18,7 +17,7 @@ export const useInfluencerStore = defineStore('influencers', () => {
 
   async function loadInfluencers() {
     const snapshot = await getDocs(collection(db, COLLECTIONS.INFLUENCERS));
-    influencers.value = snapshot.docs.map(doc => ({
+    influencers.value = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     })) as Influencer[];
@@ -55,15 +54,17 @@ export const useInfluencerStore = defineStore('influencers', () => {
         createdAt: serverTimestamp(),
       });
 
-      await Promise.all(
-        claims.map((claim: Claim) =>
-          addDoc(collection(db, COLLECTIONS.CLAIMS), {
-            ...claim,
-            influencerId: influencerRef.id,
-            createdAt: serverTimestamp(),
-          })
-        )
-      );
+      if (claims) {
+        await Promise.all(
+          claims.map((claim) =>
+            addDoc(collection(db, COLLECTIONS.CLAIMS), {
+              ...claim,
+              influencerId: influencerRef.id,
+              createdAt: serverTimestamp(),
+            }),
+          ),
+        );
+      }
 
       await loadInfluencers();
       return { influencerId: influencerRef.id };
@@ -85,16 +86,18 @@ export const useInfluencerStore = defineStore('influencers', () => {
             createdAt: serverTimestamp(),
           });
 
-          await Promise.all(
-            claims.map((claim: Claim) =>
-              addDoc(collection(db, COLLECTIONS.CLAIMS), {
-                ...claim,
-                influencerId: influencerRef.id,
-                createdAt: serverTimestamp(),
-              })
-            )
-          );
-        })
+          if (claims) {
+            await Promise.all(
+              claims.map((claim) =>
+                addDoc(collection(db, COLLECTIONS.CLAIMS), {
+                  ...claim,
+                  influencerId: influencerRef.id,
+                  createdAt: serverTimestamp(),
+                }),
+              ),
+            );
+          }
+        }),
       );
 
       await loadInfluencers();
@@ -102,7 +105,6 @@ export const useInfluencerStore = defineStore('influencers', () => {
       isAnalyzing.value = false;
     }
   }
-
   return {
     apiKey,
     influencers,
