@@ -1,24 +1,19 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
 import { useRouter } from 'vue-router';
 import type { Influencer } from '@/types/influencer';
-import { mockInfluencers } from '@/service/mock';
-import { formatNumber, getTrustScoreColor, calculateTrustScore } from '@/utils/format';
+import { formatNumber, getTrustScoreColor } from '@/utils/format';
 
+const props = defineProps<{ influencers: Influencer[] }>();
 const router = useRouter();
-const influencers = ref<Influencer[]>(mockInfluencers);
 
 const influencersWithScore = computed(() =>
-  influencers.value
-    .map(inf => ({
-      ...inf,
-      trustScore: calculateTrustScore(inf.stats.verified, inf.stats.debunked),
-    }))
-    .sort((a, b) => b.trustScore - a.trustScore)
-    .map((inf, index) => ({ ...inf, rank: index + 1 }))
+  [...props.influencers]
+    .sort((a, b) => (b.trustScore ?? 0) - (a.trustScore ?? 0))
+    .map((inf, index) => ({ ...inf, rank: index + 1 })),
 );
 
 const handleRowClick = (event: { data: Influencer }) => {

@@ -14,6 +14,7 @@ export interface Influencer {
   mainCategory: string;
   stats: VerificationStats;
   lastUpdated: string;
+  trustScore?: number;
 }
 
 export interface InfluencerResponse {

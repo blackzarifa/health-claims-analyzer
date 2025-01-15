@@ -1,5 +1,6 @@
 export interface Claim {
   id: string;
+  influencerId: string;
   date: string;
   claim: string;
   verified: boolean;
@@ -8,4 +9,4 @@ export interface Claim {
   sources: string[];
 }
 
-export type ClaimResponse = Omit<Claim, 'id'>;
+export type ClaimResponse = Omit<Claim, 'id' | 'influencerId'>;
