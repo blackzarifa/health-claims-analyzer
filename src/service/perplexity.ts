@@ -176,13 +176,13 @@ export class PerplexityAPI {
       "handle": "social media handle",
       "description": "small description about their expertise",
       "followers": number,
-      "mainCategory": "Medicine/Nutrition/Mental Health/etc...",
+      "mainCategory": "1 word to describe the influencer main field, such as: Medicine/Nutrition/Mental Health/etc...",
       "claims": [
         {
           "claim": "exact health claim",
           "trustScore": number between 0-100,
           "analysis": "verification explanation with scientific backing",
-          "sources": ["an array of strings with the sources for the analysis"],
+          "sources": ["an array of strings with the source links for the analysis"],
         }
       ],
     }`;
@@ -221,13 +221,13 @@ export class PerplexityAPI {
           "handle": "social media handle",
           "description": "small description about their expertise",
           "followers": number,
-          "mainCategory": "Medicine/Nutrition/Mental Health/etc...",
+          "mainCategory": "1 word to describe the influencer main field, such as: Medicine/Nutrition/Mental Health/etc...",
           "claims": [
             {
               "claim": "exact health claim",
               "trustScore": number between 0-100,
               "analysis": "verification explanation with scientific backing",
-              "sources": ["an array of strings with the sources for the analysis"],
+              "sources": ["1st source link string", "2nd source link string", "..."],
             }
           ]
         }
@@ -236,6 +236,7 @@ export class PerplexityAPI {
 
     const result = await this.search(prompt);
     const data = await this.parseResponse<RawDiscoverResponse>(result);
+    console.log('Parsed data:', data);
 
     return data.influencers.map((inf) => {
       const claims = (inf.claims ?? []).map((c) => this.validateClaim(c));
