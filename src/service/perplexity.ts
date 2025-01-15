@@ -22,11 +22,19 @@ export class PerplexityAPI {
       apiKey: string;
       maxClaims?: number;
       sources?: string[];
+      existingInfluencers?: Array<{ name: string; handle: string }>;
     },
   ) {
     if (!config.apiKey) {
       throw new Error('API key is required');
     }
+  }
+
+  private buildDuplicateAvoidancePrompt(): string {
+    if (!this.config.existingInfluencers?.length) return '';
+
+    const names = this.config.existingInfluencers.map((i) => `${i.name} (${i.handle})`).join(', ');
+    return `IMPORTANT: Skip these already analyzed influencers: ${names}. Find new ones instead.`;
   }
 
   private async search(prompt: string): Promise<PerplexityResponse> {
@@ -160,6 +168,7 @@ export class PerplexityAPI {
   async findInfluencer(query: string): Promise<InfluencerResponse> {
     if (!query.trim()) throw new Error('Search query is required');
 
+    const duplicateCheck = this.buildDuplicateAvoidancePrompt();
     const claimsLimit = this.config.maxClaims
       ? `Limit the response to ${this.config.maxClaims} most recent claims.`
       : '';
@@ -168,6 +177,7 @@ export class PerplexityAPI {
       : '';
 
     const prompt = `Act as a health content researcher. Search for "${query}" and analyze their recent health-related content.
+    ${duplicateCheck}
     ${claimsLimit}
     ${sourcesGuidance}
     Respond only in this JSON format:
@@ -203,6 +213,7 @@ export class PerplexityAPI {
   }
 
   async discoverInfluencers(): Promise<InfluencerResponse[]> {
+    const duplicateCheck = this.buildDuplicateAvoidancePrompt();
     const claimsLimit = this.config.maxClaims
       ? `Limit to ${this.config.maxClaims} claims per influencer.`
       : '';
@@ -211,6 +222,7 @@ export class PerplexityAPI {
       : '';
 
     const prompt = `Find 3 trending health influencers who are actively sharing scientific health advice and analyze their recent health-related content.
+    ${duplicateCheck}
     ${claimsLimit}
     ${sourcesGuidance}
     Respond only in this JSON format:
