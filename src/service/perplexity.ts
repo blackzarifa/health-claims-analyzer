@@ -115,11 +115,44 @@ export class PerplexityAPI {
   }
 
   private async parseResponse<T>(response: PerplexityResponse): Promise<T> {
+    let content = response.choices[0].message.content;
+
     try {
-      const parsed = JSON.parse(response.choices[0].message.content);
+      // Check if the content starts with a JSON object
+      if (content.trim().startsWith('{')) {
+        // If it does, assume the entire content is JSON
+        content = content.trim();
+      } else {
+        // If not, remove any non-JSON content before and after the JSON block
+        const jsonStart = content.indexOf('{');
+        const jsonEnd = content.lastIndexOf('}') + 1;
+
+        if (jsonStart === -1 || jsonEnd === -1)
+          throw new Error('Could not find JSON block in the response');
+
+        content = content.slice(jsonStart, jsonEnd).trim();
+      }
+
+      // Convert human-readable numbers to numeric values
+      content = content
+        .replace(
+          /"followers":\s*([0-9.]+)\s*(?:million|Million|M)/g,
+          (_, num) => `"followers":${parseFloat(num) * 1000000}`,
+        )
+        .replace(
+          /"followers":\s*([0-9.]+)\s*(?:k|K|thousand|Thousand)/g,
+          (_, num) => `"followers":${parseFloat(num) * 1000}`,
+        )
+        .replace(
+          /"followers":\s*"?([0-9,]+)"?/g,
+          (_, num) => `"followers":${parseInt(num.replace(/,/g, ''))}`,
+        )
+        .replace(/"followers":(\d+)/g, (_, num) => `"followers":${num},`);
+
+      const parsed = JSON.parse(content);
       return parsed as T;
     } catch (error) {
-      console.error('Parse error:', error);
+      console.error('Parse error:', error, '\nContent:', content);
       throw new Error('Failed to parse API response as JSON');
     }
   }
@@ -186,7 +219,7 @@ export class PerplexityAPI {
         {
           "name": "full name",
           "handle": "social media handle",
-          "description": "1-2 sentences about their expertise",
+          "description": "small description about their expertise",
           "followers": number,
           "mainCategory": "Medicine/Nutrition/Mental Health/etc...",
           "claims": [
