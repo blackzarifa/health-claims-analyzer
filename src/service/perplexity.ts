@@ -1,32 +1,11 @@
-import type { Influencer } from '@/types/influencer';
-import type { Claim } from '@/types/claim';
+import type { Influencer, InfluencerResponse, RawInfluencerData } from '@/types/influencer';
+import type { ClaimResponse } from '@/types/claim';
 
 interface PerplexityResponse {
   choices: Array<{
     message: {
       content: string;
     };
-  }>;
-}
-
-type ClaimResponse = Omit<Claim, 'id'>;
-
-interface InfluencerResponse {
-  influencer: Omit<Influencer, 'id'>;
-  claims?: Array<ClaimResponse>;
-}
-
-interface RawInfluencerData {
-  name: string;
-  handle: string;
-  description: string;
-  followers: number;
-  mainCategory: string;
-  claims?: Array<{
-    claim: string;
-    trustScore: number;
-    analysis: string;
-    sources: string[];
   }>;
 }
 

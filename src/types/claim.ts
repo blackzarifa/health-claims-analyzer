@@ -7,3 +7,5 @@ export interface Claim {
   analysis: string;
   sources: string[];
 }
+
+export type ClaimResponse = Omit<Claim, 'id'>;
