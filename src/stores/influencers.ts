@@ -23,13 +23,23 @@ export const useInfluencerStore = defineStore('influencers', () => {
       getDocs(collection(db, COLLECTIONS.CLAIMS)),
     ]);
 
-    const claims = claimsSnapshot.docs.map((doc) => ({
+    const allClaims = claimsSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     })) as Claim[];
 
+    claims.value = allClaims.reduce(
+      (acc, claim) => {
+        if (!acc[claim.influencerId]) {
+          acc[claim.influencerId] = [];
+        }
+        acc[claim.influencerId].push(claim);
+        return acc;
+      },
+      {} as Record<string, Claim[]>,
+    );
+
     influencers.value = influencersSnapshot.docs.map((doc) => {
-      // Explicitly type the Firestore data
       const influencerData = doc.data() as Omit<Influencer, 'id'>;
 
       const influencer = {
@@ -43,7 +53,7 @@ export const useInfluencerStore = defineStore('influencers', () => {
         lastUpdated: influencerData.lastUpdated,
       };
 
-      const influencerClaims = claims.filter((claim) => claim.influencerId === doc.id);
+      const influencerClaims = allClaims.filter((claim) => claim.influencerId === doc.id);
       const avgTrustScore =
         influencerClaims.reduce((sum, claim) => sum + claim.trustScore, 0) /
         influencerClaims.length;
@@ -54,6 +64,7 @@ export const useInfluencerStore = defineStore('influencers', () => {
       };
     });
   }
+
   function setApiKey(key: string) {
     apiKey.value = key;
     perplexityApi.value = new PerplexityAPI({

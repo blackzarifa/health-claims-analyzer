@@ -1,6 +1,6 @@
 # file: views/InfluencerView.vue
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
@@ -9,80 +9,71 @@ import InputIcon from 'primevue/inputicon';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
 import ClaimsList from '@/components/ClaimsList.vue';
-import { formatNumber, calculateTrustScore, getTrustScoreColor } from '@/utils/format';
-import { mockInfluencers } from '@/service/mock';
+import { formatNumber, getTrustScoreColor } from '@/utils/format';
+import { useInfluencerStore } from '@/stores/influencers';
 
 const route = useRoute();
+const store = useInfluencerStore();
 const influencerId = route.params.id as string;
+const isLoading = ref(true);
+
+onMounted(async () => {
+  if (!store.influencers.length) {
+    await store.loadInfluencers();
+  }
+  isLoading.value = false;
+});
+
 const searchQuery = ref('');
 const selectedVerification = ref('All');
-const sortBy = ref('Date');
-
+const sortBy = ref('Latest First');
 const sortOptions = ['Latest First', 'Oldest First', 'Trust Score High', 'Trust Score Low'];
 
-const trustScoreClass = computed(() => getTrustScoreColor(trustScore.value));
+const influencer = computed(() => store.influencers.find((inf) => inf.id === influencerId));
 
-const influencer = computed(() => mockInfluencers.find(inf => inf.id === influencerId));
+const trustScoreClass = computed(() => getTrustScoreColor(influencer.value?.trustScore ?? 0));
 
-const trustScore = computed(() =>
-  influencer.value
-    ? calculateTrustScore(influencer.value.stats.verified, influencer.value.stats.debunked)
-    : 0
-);
-
-const metrics = ref([
+const metrics = computed(() => [
   {
-    value: computed(() => `${trustScore.value}%`),
+    value: `${influencer.value?.trustScore ?? 0}%`,
     label: 'Trust Score',
-    colorClass: trustScoreClass,
+    colorClass: trustScoreClass.value,
     icon: 'pi pi-star',
   },
   {
-    value: computed(() => `${formatNumber(influencer.value?.followers || 0)}+`),
+    value: formatNumber(influencer.value?.followers || 0) + '+',
     label: 'Followers',
     colorClass: 'text-primary-500',
     icon: 'pi pi-users',
   },
   {
-    value: computed(() => influencer.value?.stats.verified || 0),
+    value: influencer.value?.stats.verified || 0,
     label: 'Verified Claims',
     colorClass: 'text-green-500',
     icon: 'pi pi-check-circle',
   },
   {
-    value: computed(() => influencer.value?.stats.debunked || 0),
+    value: influencer.value?.stats.debunked || 0,
     label: 'Debunked Claims',
     colorClass: 'text-red-500',
     icon: 'pi pi-times-circle',
   },
 ]);
 
-const claims = ref([
-  {
-    id: '1',
-    date: '2024-01-14',
-    claim: 'Viewing sunlight within 30-60 minutes of waking enhances cortisol release',
-    verified: true,
-    trustScore: 92,
-    analysis:
-      'Multiple studies confirm morning light exposure affects cortisol rhythms. Timing window supported by research.',
-  },
-  {
-    id: '2',
-    date: '2023-12-06',
-    claim: 'Non-sleep deep rest (NSDR) protocols can accelerate learning and recovery',
-    verified: true,
-    trustScore: 88,
-    analysis: "Research supports NSDR's effects on learning consolidation and autonomic recovery.",
-  },
-]);
-
 const sortedAndFilteredClaims = computed(() => {
-  let filtered = claims.value;
+  let filtered = store.claims[influencerId] || [];
 
   if (selectedVerification.value !== 'All') {
     const isVerified = selectedVerification.value === 'Verified';
-    filtered = filtered.filter(claim => claim.verified === isVerified);
+    filtered = filtered.filter((claim) => claim.verified === isVerified);
+  }
+
+  if (searchQuery.value) {
+    const search = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(
+      (claim) =>
+        claim.claim.toLowerCase().includes(search) || claim.analysis.toLowerCase().includes(search),
+    );
   }
 
   return [...filtered].sort((a, b) => {
@@ -103,8 +94,12 @@ const sortedAndFilteredClaims = computed(() => {
 </script>
 
 <template>
-  <div v-if="influencer">
-    <div class="flex flex-col md:flex-row items-center text-center md:text-left md:gap-8 mb-6">
+  <div v-if="isLoading" class="flex justify-center items-center min-h-[200px]">
+    <i class="pi pi-spin pi-spinner text-4xl text-primary-500" />
+  </div>
+
+  <div v-else-if="influencer" class="space-y-6">
+    <div class="flex flex-col md:flex-row items-center text-center md:text-left md:gap-8">
       <div>
         <h1 class="text-3xl font-bold mb-1">{{ influencer.name }}</h1>
         <p class="text-gray-400">{{ influencer.handle }}</p>
@@ -112,7 +107,7 @@ const sortedAndFilteredClaims = computed(() => {
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
       <Card v-for="metric in metrics" :key="metric.label">
         <template #content>
           <div class="text-center">
@@ -126,7 +121,7 @@ const sortedAndFilteredClaims = computed(() => {
       </Card>
     </div>
 
-    <Card class="mb-4">
+    <Card>
       <template #content>
         <div class="space-y-4">
           <IconField>
@@ -152,12 +147,7 @@ const sortedAndFilteredClaims = computed(() => {
 
             <div class="flex items-center gap-2">
               <span class="text-sm text-gray-400">Sort by:</span>
-              <Select
-                v-model="sortBy"
-                placeholder="Sort..."
-                :options="sortOptions"
-                class="w-full md:w-40"
-              />
+              <Select v-model="sortBy" :options="sortOptions" class="w-full md:w-40" />
             </div>
           </div>
         </div>
@@ -165,5 +155,11 @@ const sortedAndFilteredClaims = computed(() => {
     </Card>
 
     <ClaimsList :claims="sortedAndFilteredClaims" :searchQuery="searchQuery" />
+  </div>
+
+  <div v-else class="text-center py-12">
+    <i class="pi pi-exclamation-circle text-4xl text-red-500 mb-4" />
+    <h2 class="text-2xl font-bold mb-2">Influencer Not Found</h2>
+    <p class="text-gray-400">This influencer might have been removed or doesn't exist.</p>
   </div>
 </template>
