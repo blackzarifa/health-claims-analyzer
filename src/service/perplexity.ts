@@ -21,13 +21,11 @@ export class PerplexityAPI {
     private config: {
       apiKey: string;
       maxClaims?: number;
-      sources?: string[];
+      sources?: Array<{ name: string; id: string }>;
       existingInfluencers?: Array<{ name: string; handle: string }>;
     },
   ) {
-    if (!config.apiKey) {
-      throw new Error('API key is required');
-    }
+    if (!config.apiKey) throw new Error('API key is required');
   }
 
   private buildDuplicateAvoidancePrompt(): string {
@@ -173,7 +171,7 @@ export class PerplexityAPI {
       ? `Limit the response to ${this.config.maxClaims} most recent claims.`
       : '';
     const sourcesGuidance = this.config.sources?.length
-      ? `Prioritize verification using these sources: ${this.config.sources.join(', ')}.`
+      ? `Prioritize verification using these sources: ${this.config.sources.map((s) => s.name).join(', ')}.`
       : '';
 
     const prompt = `Act as a health content researcher. Search for "${query}" and analyze their recent health-related content.
@@ -218,7 +216,7 @@ export class PerplexityAPI {
       ? `Limit to ${this.config.maxClaims} claims per influencer.`
       : '';
     const sourcesGuidance = this.config.sources?.length
-      ? `Prioritize these sources: ${this.config.sources.join(', ')}.`
+      ? `Prioritize verification using these sources: ${this.config.sources.map((s) => s.name).join(', ')}.`
       : '';
 
     const prompt = `Find 3 trending health influencers who are actively sharing scientific health advice and analyze their recent health-related content.

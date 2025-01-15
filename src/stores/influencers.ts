@@ -71,6 +71,10 @@ export const useInfluencerStore = defineStore('influencers', () => {
       apiKey: key,
       maxClaims: settings.value.maxClaims,
       sources: settings.value.sources,
+      existingInfluencers: influencers.value.map((inf) => ({
+        name: inf.name,
+        handle: inf.handle,
+      })),
     });
   }
 
