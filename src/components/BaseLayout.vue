@@ -18,9 +18,9 @@ const menuItems = ref([
   },
 ]);
 
-const title = ref('VerifyInfluencers');
+const title = ref('Claims Analyzer');
 const titleStyle = ref(
-  'font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-primary-700'
+  'font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-primary-700',
 );
 </script>
 
