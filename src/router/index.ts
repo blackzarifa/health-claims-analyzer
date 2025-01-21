@@ -14,11 +14,6 @@ const router = createRouter({
       component: () => import('@/views/InfluencerView.vue'),
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('@/views/LoginView.vue'),
-    },
-    {
       path: '/admin',
       name: 'admin',
       component: () => import('@/views/AdminView.vue'),
@@ -26,15 +21,5 @@ const router = createRouter({
     },
   ],
 });
-
-// router.beforeEach((to, _from, next) => {
-//   const isAuthenticated = !!localStorage.getItem('token');
-//
-//   if (to.meta.requiresAuth && !isAuthenticated) {
-//     next({ name: 'login', query: { redirect: to.fullPath } });
-//   } else {
-//     next();
-//   }
-// });
 
 export default router;
