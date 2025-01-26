@@ -4,9 +4,9 @@ A Vue 3 + TypeScript app that uses AI to fact-check health influencers' claims a
 
 ## Screenshots
 
-![Leaderboard](/screenshots/admin-panel.png)
+![Leaderboard](/screenshots/leaderboard.png)
 
-![Admin Panel](/screenshots/leaderboard.png)
+![Admin Panel](/screenshots/admin-panel.png)
 
 ## Features
 
